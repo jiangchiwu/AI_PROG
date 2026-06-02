@@ -65,14 +65,24 @@ class ProgrammerApp:
         chip_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
         chip_frame.columnconfigure(0, weight=1)
 
-        # 搜索框
+        # 搜索框和厂商筛选
         search_frame = ttk.Frame(chip_frame)
         search_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 5))
-        ttk.Label(search_frame, text="搜索:").pack(side=tk.LEFT)
+        search_frame.columnconfigure(1, weight=1)
+
+        ttk.Label(search_frame, text="搜索:").grid(row=0, column=0, sticky=tk.W)
         self.search_entry = ttk.Entry(search_frame)
-        self.search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(5, 5))
+        self.search_entry.grid(row=0, column=1, sticky=(tk.W, tk.E), padx=(5, 5))
         self.search_entry.bind("<KeyRelease>", self._on_search)
-        ttk.Button(search_frame, text="清除", command=self._clear_search).pack(side=tk.LEFT)
+
+        ttk.Label(search_frame, text="厂商:").grid(row=0, column=2, sticky=tk.W, padx=(10, 0))
+        self.vendor_combo = ttk.Combobox(search_frame, width=15)
+        self.vendor_combo['values'] = ['全部'] + self.db.get_all_vendors()
+        self.vendor_combo.current(0)
+        self.vendor_combo.grid(row=0, column=3, sticky=tk.W, padx=(5, 5))
+        self.vendor_combo.bind("<<ComboboxSelected>>", self._on_vendor_filter)
+
+        ttk.Button(search_frame, text="清除", command=self._clear_search).grid(row=0, column=4)
 
         # 芯片列表
         ttk.Label(chip_frame, text="芯片列表:").grid(row=1, column=0, sticky=tk.W)
@@ -252,14 +262,35 @@ class ProgrammerApp:
 
     def _on_search(self, event):
         """搜索事件处理"""
+        self._apply_filter()
+
+    def _on_vendor_filter(self, event):
+        """厂商筛选事件处理"""
+        self._apply_filter()
+
+    def _apply_filter(self):
+        """应用搜索和筛选条件"""
         query = self.search_entry.get()
+        vendor = self.vendor_combo.get()
+
         results = self.db.search_chips(query)
+
+        if vendor != '全部':
+            results = [chip for chip in results if chip.get('vendor') == vendor]
+
         self._populate_chip_list(results)
-        self._log(f"搜索 '{query}' 找到 {len(results)} 款芯片")
+        count = len(results)
+        if query and vendor != '全部':
+            self._log(f"搜索 '{query}' 且厂商 '{vendor}' 找到 {count} 款芯片")
+        elif query:
+            self._log(f"搜索 '{query}' 找到 {count} 款芯片")
+        elif vendor != '全部':
+            self._log(f"筛选厂商 '{vendor}' 找到 {count} 款芯片")
 
     def _clear_search(self):
         """清除搜索"""
         self.search_entry.delete(0, tk.END)
+        self.vendor_combo.current(0)
         self._populate_chip_list(self.db.chips)
 
     def _on_chip_select(self, event):

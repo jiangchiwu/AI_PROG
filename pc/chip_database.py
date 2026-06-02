@@ -139,7 +139,7 @@ class ChipDatabase:
             },
         ]
 
-        # STM32系列（示例部分）
+        # STM32系列
         stm32_chips = [
             {
                 "name": "STM32F103C8",
@@ -196,9 +196,267 @@ class ChipDatabase:
                 "debug_interfaces": ["SWD", "JTAG"],
                 "status": "supported"
             },
+            {
+                "name": "STM32L431RC",
+                "vendor": "STMicroelectronics",
+                "family": "STM32L4",
+                "core": "Cortex-M4F",
+                "flash_size": 262144,
+                "ram_size": 65536,
+                "package": "LQFP64",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+            {
+                "name": "STM32G071RB",
+                "vendor": "STMicroelectronics",
+                "family": "STM32G0",
+                "core": "Cortex-M0+",
+                "flash_size": 131072,
+                "ram_size": 32768,
+                "package": "LQFP64",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+            {
+                "name": "STM32G474RE",
+                "vendor": "STMicroelectronics",
+                "family": "STM32G4",
+                "core": "Cortex-M4F",
+                "flash_size": 524288,
+                "ram_size": 153600,
+                "package": "LQFP64",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+            {
+                "name": "STM32WB55CG",
+                "vendor": "STMicroelectronics",
+                "family": "STM32WB",
+                "core": "Cortex-M4F",
+                "flash_size": 524288,
+                "ram_size": 128000,
+                "package": "LQFP48",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
         ]
 
-        self.chips = s32k_chips + stm32_chips
+        # Infineon系列
+        infineon_chips = [
+            {
+                "name": "XMC1404",
+                "vendor": "Infineon",
+                "family": "XMC1",
+                "core": "Cortex-M0+",
+                "flash_size": 65536,
+                "ram_size": 16384,
+                "package": "LQFP48",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+            {
+                "name": "XMC4700",
+                "vendor": "Infineon",
+                "family": "XMC4",
+                "core": "Cortex-M4F",
+                "flash_size": 524288,
+                "ram_size": 81920,
+                "package": "LQFP144",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+            {
+                "name": "TLE9844",
+                "vendor": "Infineon",
+                "family": "TLE98",
+                "core": "Cortex-M0+",
+                "flash_size": 131072,
+                "ram_size": 32768,
+                "package": "LQFP64",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+            {
+                "name": "AURIX TC275",
+                "vendor": "Infineon",
+                "family": "AURIX",
+                "core": "TriCore",
+                "flash_size": 2097152,
+                "ram_size": 524288,
+                "package": "LQFP176",
+                "debug_interfaces": ["JTAG", "DAP"],
+                "status": "supported"
+            },
+            {
+                "name": "AURIX TC397",
+                "vendor": "Infineon",
+                "family": "AURIX",
+                "core": "TriCore",
+                "flash_size": 8388608,
+                "ram_size": 2097152,
+                "package": "LFBGA384",
+                "debug_interfaces": ["JTAG", "DAP"],
+                "status": "supported"
+            },
+        ]
+
+        # Cypress系列
+        cypress_chips = [
+            {
+                "name": "PSoC4 BLE",
+                "vendor": "Cypress",
+                "family": "PSoC4",
+                "core": "Cortex-M0+",
+                "flash_size": 128000,
+                "ram_size": 16384,
+                "package": "QFN48",
+                "debug_interfaces": ["SWD"],
+                "status": "supported"
+            },
+            {
+                "name": "PSoC5 LP",
+                "vendor": "Cypress",
+                "family": "PSoC5",
+                "core": "Cortex-M3",
+                "flash_size": 256000,
+                "ram_size": 65536,
+                "package": "BGA100",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+            {
+                "name": "PSoC6 BLE",
+                "vendor": "Cypress",
+                "family": "PSoC6",
+                "core": "Cortex-M4F",
+                "flash_size": 1048576,
+                "ram_size": 286720,
+                "package": "QFN64",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+            {
+                "name": "Traveo II",
+                "vendor": "Cypress",
+                "family": "Traveo",
+                "core": "Cortex-M7",
+                "flash_size": 4194304,
+                "ram_size": 1048576,
+                "package": "LQFP176",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+        ]
+
+        # Renesas系列
+        renesas_chips = [
+            {
+                "name": "RL78/G13",
+                "vendor": "Renesas",
+                "family": "RL78",
+                "core": "RL78",
+                "flash_size": 65536,
+                "ram_size": 8192,
+                "package": "LQFP48",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+            {
+                "name": "RX65N",
+                "vendor": "Renesas",
+                "family": "RX",
+                "core": "RXv2",
+                "flash_size": 524288,
+                "ram_size": 65536,
+                "package": "LQFP100",
+                "debug_interfaces": ["JTAG"],
+                "status": "supported"
+            },
+            {
+                "name": "RA4M1",
+                "vendor": "Renesas",
+                "family": "RA",
+                "core": "Cortex-M4F",
+                "flash_size": 262144,
+                "ram_size": 32768,
+                "package": "LQFP64",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+            {
+                "name": "RZ/A2M",
+                "vendor": "Renesas",
+                "family": "RZ",
+                "core": "Cortex-A9",
+                "flash_size": 0,
+                "ram_size": 1048576,
+                "package": "BGA324",
+                "debug_interfaces": ["JTAG", "DAP"],
+                "status": "supported"
+            },
+        ]
+
+        # GD系列
+        gd_chips = [
+            {
+                "name": "GD32F103C8",
+                "vendor": "GigaDevice",
+                "family": "GD32F1",
+                "core": "Cortex-M3",
+                "flash_size": 65536,
+                "ram_size": 20480,
+                "package": "LQFP48",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+            {
+                "name": "GD32F407ZG",
+                "vendor": "GigaDevice",
+                "family": "GD32F4",
+                "core": "Cortex-M4F",
+                "flash_size": 1048576,
+                "ram_size": 196608,
+                "package": "LQFP144",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+            {
+                "name": "GD32F303RC",
+                "vendor": "GigaDevice",
+                "family": "GD32F3",
+                "core": "Cortex-M4F",
+                "flash_size": 262144,
+                "ram_size": 49152,
+                "package": "LQFP64",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+            {
+                "name": "GD32E503RC",
+                "vendor": "GigaDevice",
+                "family": "GD32E5",
+                "core": "Cortex-M33F",
+                "flash_size": 524288,
+                "ram_size": 131072,
+                "package": "LQFP64",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+            {
+                "name": "GD32L433RC",
+                "vendor": "GigaDevice",
+                "family": "GD32L4",
+                "core": "Cortex-M4F",
+                "flash_size": 262144,
+                "ram_size": 65536,
+                "package": "LQFP64",
+                "debug_interfaces": ["SWD", "JTAG"],
+                "status": "supported"
+            },
+        ]
+
+        self.chips = s32k_chips + stm32_chips + infineon_chips + cypress_chips + renesas_chips + gd_chips
         self._save_database()
 
     def search_chips(self, query: str, case_sensitive: bool = False) -> List[Dict[str, Any]]:
