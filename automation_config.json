@@ -1,0 +1,29 @@
+
+{
+    "sample_rate": 100,
+    "sample_depth": 1048576,
+    "trigger_channel": 0,
+    "trigger_type": "rising_edge",
+    "test_duration_ms": 100,
+    "loop_interval_ms": 500,
+    "output_dir": "test_results",
+    "report_dir": "reports",
+    "log_file": "dslogic_automation.log",
+    "alert_thresholds": {
+        "min_clk_freq_mhz": 40,
+        "max_clk_freq_mhz": 120,
+        "min_frame_duration_ns": 350,
+        "max_protocol_errors": 0
+    },
+    "continuous_test": {
+        "enabled": true,
+        "duration_minutes": 5,
+        "auto_restart": true
+    },
+    "report": {
+        "generate_html": true,
+        "generate_csv": true,
+        "send_email": false,
+        "email_recipient": ""
+    }
+}
