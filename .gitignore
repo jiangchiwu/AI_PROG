@@ -1,0 +1,31 @@
+
+# Keil MDK编译输出
+*.o
+*.d
+*.crf
+*.axf
+*.hex
+*.htm
+*.map
+*.lnp
+*.dep
+*.log
+*.build_log.htm
+*.i
+*.__i
+*._ia
+
+# 中间文件
+PROG/MDK-ARM/PROG/
+PROG/MDK-ARM/07-ADC_Test_LCD1_8/
+PROG/MDK-ARM/build_log.txt
+PROG/MDK-ARM/debug.log
+
+# 临时文件
+*.tmp
+*.bak
+*~
+
+# 开发资料 - 可选（体积较大）
+开发资料/
+
