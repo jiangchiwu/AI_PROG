@@ -818,6 +818,206 @@ I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h)(0x6A0939BF)
 I (D:\soft\keil5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
 I (../Core/Inc/jtag.h)(0x6A1DCBAA)
 I (D:\soft\keil5\ARM\ARMCC\include\string.h)(0x5475F300)
+F (../Core/Src/iic.c)(0x6A1E1EA0)(--c99 -c --cpu Cortex-M7.fp.dp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Core/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I../Drivers/CMSIS/Include -I..\Drivers\BSP\ST7735-I F:\work\AI_PROG\PROG\MDK-ARM\RTE-I D:\soft\keil5\pack\ARM\CMSIS\6.3.0\CMSIS\Core\Include-I D:\soft\keil5\pack\Keil\STM32H7xx_DFP\2.8.0-D__UVISION_VERSION="514" -D_RTE_ -DSTM32H750xx -DUSE_HAL_DRIVER -DSTM32H750xx -DTFT18-o .\07-adc_test_lcd1_8\iic.o --omf_browse .\07-adc_test_lcd1_8\iic.crf --depend .\07-adc_test_lcd1_8\iic.d)
+I (../Core/Inc/iic.h)(0x6A1E1E6D)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h)(0x6A0939BF)
+I (../Core/Inc/stm32h7xx_hal_conf.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h750xx.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/core_cm7.h)(0x6A0939BF)
+I (D:\soft\keil5\ARM\ARMCC\include\stdint.h)(0x5475F300)
+I (../Drivers/CMSIS/Include/cmsis_version.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x6A0939BF)
+I (D:\soft\keil5\ARM\ARMCC\include\stddef.h)(0x5475F300)
+I (D:\soft\keil5\ARM\ARMCC\include\math.h)(0x5475F2FE)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_mdma.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_exti.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_cortex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_adc.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_adc.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_adc_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_hsem.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h)(0x6A0939BF)
+F (../Core/Src/spi_soft.c)(0x6A1E1EE2)(--c99 -c --cpu Cortex-M7.fp.dp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Core/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I../Drivers/CMSIS/Include -I..\Drivers\BSP\ST7735-I F:\work\AI_PROG\PROG\MDK-ARM\RTE-I D:\soft\keil5\pack\ARM\CMSIS\6.3.0\CMSIS\Core\Include-I D:\soft\keil5\pack\Keil\STM32H7xx_DFP\2.8.0-D__UVISION_VERSION="514" -D_RTE_ -DSTM32H750xx -DUSE_HAL_DRIVER -DSTM32H750xx -DTFT18-o .\07-adc_test_lcd1_8\spi_soft.o --omf_browse .\07-adc_test_lcd1_8\spi_soft.crf --depend .\07-adc_test_lcd1_8\spi_soft.d)
+I (../Core/Inc/spi_soft.h)(0x6A1E1EBB)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h)(0x6A0939BF)
+I (../Core/Inc/stm32h7xx_hal_conf.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h750xx.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/core_cm7.h)(0x6A0939BF)
+I (D:\soft\keil5\ARM\ARMCC\include\stdint.h)(0x5475F300)
+I (../Drivers/CMSIS/Include/cmsis_version.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x6A0939BF)
+I (D:\soft\keil5\ARM\ARMCC\include\stddef.h)(0x5475F300)
+I (D:\soft\keil5\ARM\ARMCC\include\math.h)(0x5475F2FE)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_mdma.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_exti.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_cortex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_adc.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_adc.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_adc_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_hsem.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h)(0x6A0939BF)
+F (../Core/Src/swim.c)(0x6A1E1F24)(--c99 -c --cpu Cortex-M7.fp.dp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Core/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I../Drivers/CMSIS/Include -I..\Drivers\BSP\ST7735-I F:\work\AI_PROG\PROG\MDK-ARM\RTE-I D:\soft\keil5\pack\ARM\CMSIS\6.3.0\CMSIS\Core\Include-I D:\soft\keil5\pack\Keil\STM32H7xx_DFP\2.8.0-D__UVISION_VERSION="514" -D_RTE_ -DSTM32H750xx -DUSE_HAL_DRIVER -DSTM32H750xx -DTFT18-o .\07-adc_test_lcd1_8\swim.o --omf_browse .\07-adc_test_lcd1_8\swim.crf --depend .\07-adc_test_lcd1_8\swim.d)
+I (../Core/Inc/swim.h)(0x6A1E1EFA)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h)(0x6A0939BF)
+I (../Core/Inc/stm32h7xx_hal_conf.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h750xx.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/core_cm7.h)(0x6A0939BF)
+I (D:\soft\keil5\ARM\ARMCC\include\stdint.h)(0x5475F300)
+I (../Drivers/CMSIS/Include/cmsis_version.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x6A0939BF)
+I (D:\soft\keil5\ARM\ARMCC\include\stddef.h)(0x5475F300)
+I (D:\soft\keil5\ARM\ARMCC\include\math.h)(0x5475F2FE)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_mdma.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_exti.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_cortex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_adc.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_adc.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_adc_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_hsem.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h)(0x6A0939BF)
+F (../Core/Src/bdm.c)(0x6A1E1F56)(--c99 -c --cpu Cortex-M7.fp.dp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Core/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I../Drivers/CMSIS/Include -I..\Drivers\BSP\ST7735-I F:\work\AI_PROG\PROG\MDK-ARM\RTE-I D:\soft\keil5\pack\ARM\CMSIS\6.3.0\CMSIS\Core\Include-I D:\soft\keil5\pack\Keil\STM32H7xx_DFP\2.8.0-D__UVISION_VERSION="514" -D_RTE_ -DSTM32H750xx -DUSE_HAL_DRIVER -DSTM32H750xx -DTFT18-o .\07-adc_test_lcd1_8\bdm.o --omf_browse .\07-adc_test_lcd1_8\bdm.crf --depend .\07-adc_test_lcd1_8\bdm.d)
+I (../Core/Inc/bdm.h)(0x6A1E1F38)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h)(0x6A0939BF)
+I (../Core/Inc/stm32h7xx_hal_conf.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h750xx.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/core_cm7.h)(0x6A0939BF)
+I (D:\soft\keil5\ARM\ARMCC\include\stdint.h)(0x5475F300)
+I (../Drivers/CMSIS/Include/cmsis_version.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x6A0939BF)
+I (D:\soft\keil5\ARM\ARMCC\include\stddef.h)(0x5475F300)
+I (D:\soft\keil5\ARM\ARMCC\include\math.h)(0x5475F2FE)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_mdma.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_exti.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_cortex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_adc.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_adc.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_adc_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_hsem.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h)(0x6A0939BF)
+F (../Core/Src/icsp.c)(0x6A1E1F92)(--c99 -c --cpu Cortex-M7.fp.dp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Core/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I../Drivers/CMSIS/Include -I..\Drivers\BSP\ST7735-I F:\work\AI_PROG\PROG\MDK-ARM\RTE-I D:\soft\keil5\pack\ARM\CMSIS\6.3.0\CMSIS\Core\Include-I D:\soft\keil5\pack\Keil\STM32H7xx_DFP\2.8.0-D__UVISION_VERSION="514" -D_RTE_ -DSTM32H750xx -DUSE_HAL_DRIVER -DSTM32H750xx -DTFT18-o .\07-adc_test_lcd1_8\icsp.o --omf_browse .\07-adc_test_lcd1_8\icsp.crf --depend .\07-adc_test_lcd1_8\icsp.d)
+I (../Core/Inc/icsp.h)(0x6A1E1F6B)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h)(0x6A0939BF)
+I (../Core/Inc/stm32h7xx_hal_conf.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h750xx.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/core_cm7.h)(0x6A0939BF)
+I (D:\soft\keil5\ARM\ARMCC\include\stdint.h)(0x5475F300)
+I (../Drivers/CMSIS/Include/cmsis_version.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x6A0939BF)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x6A0939BF)
+I (D:\soft\keil5\ARM\ARMCC\include\stddef.h)(0x5475F300)
+I (D:\soft\keil5\ARM\ARMCC\include\math.h)(0x5475F2FE)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_mdma.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_exti.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_cortex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_adc.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_adc.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_adc_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_hsem.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi_ex.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h)(0x6A0939BF)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h)(0x6A0939BF)
 F (../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_adc.c)(0x6A0939BF)(--c99 -c --cpu Cortex-M7.fp.dp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Core/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I../Drivers/CMSIS/Include -I..\Drivers\BSP\ST7735-I F:\work\AI_PROG\PROG\MDK-ARM\RTE-I D:\soft\keil5\pack\ARM\CMSIS\6.3.0\CMSIS\Core\Include-I D:\soft\keil5\pack\Keil\STM32H7xx_DFP\2.8.0-D__UVISION_VERSION="514" -D_RTE_ -DSTM32H750xx -DUSE_HAL_DRIVER -DSTM32H750xx -DTFT18-o .\07-adc_test_lcd1_8\stm32h7xx_hal_adc.o --omf_browse .\07-adc_test_lcd1_8\stm32h7xx_hal_adc.crf --depend .\07-adc_test_lcd1_8\stm32h7xx_hal_adc.d)
 I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h)(0x6A0939BF)
 I (../Core/Inc/stm32h7xx_hal_conf.h)(0x6A0939BF)

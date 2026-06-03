@@ -513,6 +513,31 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/dmi.c</FilePath>
             </File>
+            <File>
+              <FileName>iic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/iic.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_soft.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/spi_soft.c</FilePath>
+            </File>
+            <File>
+              <FileName>swim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/swim.c</FilePath>
+            </File>
+            <File>
+              <FileName>bdm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/bdm.c</FilePath>
+            </File>
+            <File>
+              <FileName>icsp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/icsp.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

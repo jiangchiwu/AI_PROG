@@ -124,6 +124,70 @@ typedef struct {
 #define S32K3_SECTOR_SIZE_32K   0x00008000UL
 #define S32K3_PAGE_SIZE        0x00000200UL
 
+// STM32系列定义
+#define STM32_FLASH_BASE        0x08000000UL
+#define STM32_SRAM_BASE         0x20000000UL
+#define STM32H7_SRAM_BASE       0x24000000UL
+
+// STM32 F1系列扇区大小
+#define STM32F1_SECTOR_SIZE_1K  0x00000400UL
+#define STM32F1_SECTOR_SIZE_2K  0x00000800UL
+#define STM32F1_SECTOR_SIZE_4K  0x00001000UL
+#define STM32F1_SECTOR_SIZE_8K  0x00002000UL
+#define STM32F1_SECTOR_SIZE_16K 0x00004000UL
+
+// STM32 F4系列扇区大小
+#define STM32F4_SECTOR_SIZE_16K 0x00004000UL
+#define STM32F4_SECTOR_SIZE_64K 0x00010000UL
+#define STM32F4_SECTOR_SIZE_128K 0x00020000UL
+
+// STM32 H7系列扇区大小
+#define STM32H7_SECTOR_SIZE_128K 0x00020000UL
+#define STM32H7_SECTOR_SIZE_256K 0x00040000UL
+
+// STM32 Flash寄存器地址（通过DAP访问目标芯片）
+#define STM32_FLASH_KEYR_ADDR   0x40023C04UL
+#define STM32_FLASH_OPTKEYR_ADDR 0x40023C08UL
+#define STM32_FLASH_SR_ADDR     0x40023C0CUL
+#define STM32_FLASH_CR_ADDR     0x40023C10UL
+#define STM32_FLASH_AR_ADDR     0x40023C14UL
+
+// STM32H7 Flash寄存器地址
+#define STM32H7_FLASH_CR1_ADDR  0x52002000UL
+#define STM32H7_FLASH_CR2_ADDR  0x52002004UL
+#define STM32H7_FLASH_CR3_ADDR  0x52002008UL
+#define STM32H7_FLASH_SR1_ADDR  0x5200200CUL
+#define STM32H7_FLASH_SR2_ADDR  0x52002010UL
+#define STM32H7_FLASH_PAR_ADDR  0x52002014UL
+
+// STM32 Flash密钥
+#define STM32_FLASH_KEY1        0x45670123UL
+#define STM32_FLASH_KEY2        0xCDEF89ABUL
+
+// STM32 Flash状态位
+#define STM32_FLASH_SR_BSY      (1 << 16)
+#define STM32_FLASH_SR_EOP      (1 << 0)
+#define STM32_FLASH_SR_WRPERR   (1 << 4)
+#define STM32_FLASH_SR_PGAERR   (1 << 5)
+#define STM32_FLASH_SR_PGPERR   (1 << 6)
+#define STM32_FLASH_SR_PGSERR   (1 << 7)
+
+// STM32 Flash控制位
+#define STM32_FLASH_CR_PG       (1 << 0)
+#define STM32_FLASH_CR_PER      (1 << 1)
+#define STM32_FLASH_CR_MER      (1 << 2)
+#define STM32_FLASH_CR_SER      (1 << 3)
+#define STM32_FLASH_CR_BKER     (1 << 11)
+#define STM32_FLASH_CR_EOPIE    (1 << 12)
+#define STM32_FLASH_CR_LOCK     (1 << 31)
+
+// STM32H7 Flash控制位
+#define STM32H7_FLASH_CR1_PG    (1 << 0)
+#define STM32H7_FLASH_CR1_SER   (1 << 1)
+#define STM32H7_FLASH_CR1_MER   (1 << 2)
+#define STM32H7_FLASH_CR1_BSY   (1 << 16)
+#define STM32H7_FLASH_CR1_EOP   (1 << 0)
+
 // 函数声明
 HAL_StatusTypeDef Chip_Init(void);
 HAL_StatusTypeDef Chip_DeInit(void);
@@ -152,6 +216,107 @@ HAL_StatusTypeDef S32K3_Flash_Init(void);
 HAL_StatusTypeDef S32K3_Flash_Erase_Sector(uint32_t addr);
 HAL_StatusTypeDef S32K3_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
 HAL_StatusTypeDef S32K3_Flash_Read(uint32_t addr, uint8_t *data, uint32_t size);
+
+// STM32系列特定函数
+HAL_StatusTypeDef STM32F1_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef STM32F1_Flash_Init(void);
+HAL_StatusTypeDef STM32F1_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef STM32F1_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef STM32F4_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef STM32F4_Flash_Init(void);
+HAL_StatusTypeDef STM32F4_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef STM32F4_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef STM32H7_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef STM32H7_Flash_Init(void);
+HAL_StatusTypeDef STM32H7_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef STM32H7_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef STM32F0_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef STM32F0_Flash_Init(void);
+HAL_StatusTypeDef STM32F0_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef STM32F0_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef STM32F2_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef STM32F2_Flash_Init(void);
+HAL_StatusTypeDef STM32F2_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef STM32F2_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef STM32F3_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef STM32F3_Flash_Init(void);
+HAL_StatusTypeDef STM32F3_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef STM32F3_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef STM32F7_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef STM32F7_Flash_Init(void);
+HAL_StatusTypeDef STM32F7_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef STM32F7_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef STM32L0_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef STM32L0_Flash_Init(void);
+HAL_StatusTypeDef STM32L0_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef STM32L0_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef STM32L1_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef STM32L1_Flash_Init(void);
+HAL_StatusTypeDef STM32L1_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef STM32L1_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef STM32L4_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef STM32L4_Flash_Init(void);
+HAL_StatusTypeDef STM32L4_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef STM32L4_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef STM32L5_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef STM32L5_Flash_Init(void);
+HAL_StatusTypeDef STM32L5_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef STM32L5_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef STM32G0_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef STM32G0_Flash_Init(void);
+HAL_StatusTypeDef STM32G0_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef STM32G0_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef STM32G4_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef STM32G4_Flash_Init(void);
+HAL_StatusTypeDef STM32G4_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef STM32G4_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef STM32WB_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef STM32WB_Flash_Init(void);
+HAL_StatusTypeDef STM32WB_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef STM32WB_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef GD32F1_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef GD32F1_Flash_Init(void);
+HAL_StatusTypeDef GD32F1_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef GD32F1_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef GD32F3_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef GD32F3_Flash_Init(void);
+HAL_StatusTypeDef GD32F3_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef GD32F3_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef GD32F4_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef GD32F4_Flash_Init(void);
+HAL_StatusTypeDef GD32F4_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef GD32F4_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef GD32E2_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef GD32E2_Flash_Init(void);
+HAL_StatusTypeDef GD32E2_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef GD32E2_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef GD32E5_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef GD32E5_Flash_Init(void);
+HAL_StatusTypeDef GD32E5_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef GD32E5_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
+
+HAL_StatusTypeDef GD32L2_Detect(Chip_Info_TypeDef *info);
+HAL_StatusTypeDef GD32L2_Flash_Init(void);
+HAL_StatusTypeDef GD32L2_Flash_Erase_Sector(uint32_t addr);
+HAL_StatusTypeDef GD32L2_Flash_Write(uint32_t addr, uint8_t *data, uint32_t size);
 
 HAL_StatusTypeDef Chip_ReadChipID(uint32_t *id);
 

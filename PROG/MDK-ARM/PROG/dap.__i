@@ -1,6 +1,0 @@
---c99 -c --cpu Cortex-M7.fp.dp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I../Core/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I../Drivers/CMSIS/Include -I..\Drivers\BSP\ST7735
--I F:\work\AI_PROG\PROG\MDK-ARM\RTE
--I D:\soft\keil5\pack\ARM\CMSIS\6.3.0\CMSIS\Core\Include
--I D:\soft\keil5\pack\Keil\STM32H7xx_DFP\2.8.0
--D__UVISION_VERSION="514" -D_RTE_ -DSTM32H750xx -DUSE_HAL_DRIVER -DSTM32H750xx -DTFT18
--o .\prog\dap.o --omf_browse .\prog\dap.crf --depend .\prog\dap.d "../Core/Src/dap.c"
