@@ -1,0 +1,4 @@
+name,vendor,family,series,core,flash_size,ram_size,package,debug_interfaces
+TEST_CSV_001,CSVVendor,CSVFamily,CSVSeries,ARM Cortex-M3,256,64,LQFP-64,SWD,JTAG
+TEST_CSV_002,CSVVendor,CSVFamily,CSVSeries,ARM Cortex-M3,512,128,LQFP-100,SWD,JTAG
+TEST_CSV_003,AnotherCSV,AnotherCSVFamily,AnotherCSVSeries,RISC-V,128,32,QFN-48,JTAG

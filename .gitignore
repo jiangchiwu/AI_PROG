@@ -1,31 +1,105 @@
+# ==================== AI_PROG项目 .gitignore ====================
+# 版本: v3.0
+# 更新日期: 2026-06-03
 
-# Keil MDK编译输出
-*.o
-*.d
-*.crf
-*.axf
+# ==================== 大文件排除 (>10MB) ====================
+# PDF文档超过10MB的排除
+*.pdf
+!docs/*.pdf
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+
+# 编译产物
+*.bin
 *.hex
-*.htm
+*.elf
+*.axf
 *.map
-*.lnp
-*.dep
-*.log
-*.build_log.htm
-*.i
-*.__i
-*._ia
+*.lst
 
-# 中间文件
-PROG/MDK-ARM/PROG/
-PROG/MDK-ARM/07-ADC_Test_LCD1_8/
-PROG/MDK-ARM/build_log.txt
-PROG/MDK-ARM/debug.log
+# ==================== IDE和编辑器 ====================
+# Keil MDK
+*.uvguix.*
+*.uvoptx
+*.bak
+RTE/
+DebugConfig/
+Listings/
+Objects/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+__pycache__/
+*.pyc
+*.pyo
+
+# ==================== 编译和构建 ====================
+# 目标文件
+*.o
+*.obj
+*.a
+*.lib
+
+# 可执行文件
+*.exe
+*.out
+*.app
+
+# 依赖文件
+*.d
+*.dep
+
+# ==================== 日志和临时文件 ====================
+# 日志
+*.log
+JLinkLog.txt
+build_output.txt
 
 # 临时文件
 *.tmp
-*.bak
+*.temp
+*.swp
+*.swo
 *~
 
-# 开发资料 - 可选（体积较大）
+# ==================== 测试和报告 ====================
+# 测试报告 (保留目录结构)
+# reports/
+
+# ==================== 芯片文档 ====================
+# 下载的芯片文档 (太大，不纳入版本控制)
+chip_docs/
 开发资料/
 
+# ==================== 数据库文件 ====================
+# SQLite数据库
+chips_million.db
+*.db-journal
+*.db-wal
+
+# ==================== 其他 ====================
+# 压缩文件
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==================== 保留的文件 ====================
+# 保留小的PDF文档
+!docs/architecture/*.pdf
+
+# 保留示例配置
+!config/examples/*

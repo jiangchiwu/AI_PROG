@@ -354,7 +354,9 @@ Docs/
 
 **通用特性**:
 - 基于GPIO软件模拟时序
-- 可配置时钟频率(100KHz~1MHz)
+- 可配置时钟频率(100KHz~10MHz)
+- 使用寄存器直接操作BSRR/IDR/MODER，提升IO速度
+- 使用独立定时器精确定时，纳秒级延时精度
 - 完整的复位、进入/退出调试模式
 - 内存读写、Flash擦除、芯片ID读取
 - 支持不同引脚配置
@@ -363,6 +365,24 @@ Docs/
 **依赖文件**:
 - `gpio_soft.h/c`: GPIO软件抽象层
 - `tim.h`: 定时器延时支持
+
+### 7.4 统一调试接口
+
+为方便使用，提供了统一的调试接口层 (`debug_if.h/c`):
+
+```c
+// 统一初始化
+Debug_IF_Init(DEBUG_IF_SBW, 5000000);  // 5MHz SBW接口
+
+// 统一操作
+Debug_IF_Enter();
+Debug_IF_ReadMem(addr, data, size);
+Debug_IF_WriteMem(addr, data, size);
+Debug_IF_Exit();
+
+// 获取芯片信息
+uint32_t chip_id = Debug_IF_GetChipID();
+```
 
 ---
 
@@ -405,3 +425,6 @@ Docs/
 
 ### Infineon
 - AURIX工具: https://www.infineon.com/cms/en/product/microcontroller/32-bit-tricore-microcontroller/aurix-32-bit-tricore-microcontroller/
+
+### 完整资料下载文档
+- 详细的技术文档下载链接请参考：[chip_reference_manuals.md](./chip_reference_manuals.md)

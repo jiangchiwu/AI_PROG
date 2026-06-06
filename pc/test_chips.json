@@ -1,0 +1,37 @@
+{
+  "chips": [
+    {
+      "name": "TEST_MCU_001",
+      "vendor": "TestVendor",
+      "family": "TestFamily",
+      "series": "TestSeries",
+      "core": "ARM Cortex-M4",
+      "flash_size": 256,
+      "ram_size": 64,
+      "package": "LQFP-64",
+      "debug_interfaces": ["SWD", "JTAG"]
+    },
+    {
+      "name": "TEST_MCU_002",
+      "vendor": "TestVendor",
+      "family": "TestFamily",
+      "series": "TestSeries",
+      "core": "ARM Cortex-M4",
+      "flash_size": 512,
+      "ram_size": 128,
+      "package": "LQFP-100",
+      "debug_interfaces": ["SWD", "JTAG"]
+    },
+    {
+      "name": "TEST_MCU_003",
+      "vendor": "AnotherVendor",
+      "family": "AnotherFamily",
+      "series": "AnotherSeries",
+      "core": "RISC-V",
+      "flash_size": 128,
+      "ram_size": 32,
+      "package": "QFN-48",
+      "debug_interfaces": ["JTAG"]
+    }
+  ]
+}

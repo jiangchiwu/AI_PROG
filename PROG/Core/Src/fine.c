@@ -3,62 +3,153 @@
  * @file    fine.c
  * @brief   FINE (Flash Interface Network for Easy Programming) 接口实现
  *          Renesas 瑞萨单片机调试编程接口
+ *          支持最高10MHz时钟频率，使用寄存器操作和定时器精确定时
  ******************************************************************************
  */
 
 #include "fine.h"
-#include "gpio_soft.h"
-#include "tim.h"
 
 FINE_Config_TypeDef g_fine_config = {0};
 FINE_State_TypeDef g_fine_state = {0};
 
-static uint32_t g_fine_delay = 0;
+#define FINE_TIM TIM13
 
-#define FINE_SET_DATA_HIGH()  GPIO_Soft_WritePin(g_fine_config.flmd0_port, g_fine_config.flmd0_pin, SOFT_GPIO_HIGH)
-#define FINE_SET_DATA_LOW()  GPIO_Soft_WritePin(g_fine_config.flmd0_port, g_fine_config.flmd0_pin, SOFT_GPIO_LOW)
-#define FINE_READ_DATA()  GPIO_Soft_ReadPin(g_fine_config.flmd0_port, g_fine_config.flmd0_pin)
+static void FINE_TimerWait(uint32_t ticks)
+{
+    FINE_TIM->CNT = 0;
+    while (FINE_TIM->CNT < ticks);
+}
 
-#define FINE_SET_CLK_HIGH()  GPIO_Soft_WritePin(g_fine_config.flclk_port, g_fine_config.flclk_pin, SOFT_GPIO_HIGH)
-#define FINE_SET_CLK_LOW()  GPIO_Soft_WritePin(g_fine_config.flclk_port, g_fine_config.flclk_pin, SOFT_GPIO_LOW)
+void FINE_DelayNs(uint32_t ns)
+{
+    uint32_t ticks = (ns + g_fine_config.tick_ns - 1) / g_fine_config.tick_ns;
+    FINE_TimerWait(ticks);
+}
 
-#define FINE_DATA_MODE_OUT() GPIO_Soft_SetMode(g_fine_config.flmd0_port, g_fine_config.flmd0_pin, SOFT_GPIO_MODE_OUT_PP, SOFT_GPIO_PULL_UP)
-#define FINE_DATA_MODE_IN()  GPIO_Soft_SetMode(g_fine_config.flmd0_port, g_fine_config.flmd0_pin, SOFT_GPIO_MODE_IN, SOFT_GPIO_PULL_UP)
-
-/**
- * @brief 微秒延时函数
- */
 void FINE_DelayUs(uint32_t us)
 {
-    if (us == 0) {
-        return;
+    uint32_t ticks = (us * 1000 + g_fine_config.tick_ns - 1) / g_fine_config.tick_ns;
+    FINE_TimerWait(ticks);
+}
+
+void FINE_SetSpeed(uint32_t speed_hz)
+{
+    if (speed_hz > FINE_CLOCK_10MHZ) {
+        speed_hz = FINE_CLOCK_10MHZ;
     }
     
-    uint32_t delay = us * g_fine_delay;
-    while (delay--) {
-        __NOP();
+    g_fine_config.speed_hz = speed_hz;
+    
+    uint32_t apb1_freq = HAL_RCC_GetPCLK1Freq();
+    uint32_t tick_freq = speed_hz * 10;
+    
+    g_fine_config.prescaler = (apb1_freq + tick_freq - 1) / tick_freq;
+    if (g_fine_config.prescaler < 1) {
+        g_fine_config.prescaler = 1;
+    }
+    
+    g_fine_config.tick_ns = 1000000000ULL / (apb1_freq / g_fine_config.prescaler);
+    g_fine_config.period = 65535;
+    
+    if (FINE_TIM->CR1 & TIM_CR1_CEN) {
+        FINE_TIM->CR1 &= ~TIM_CR1_CEN;
+        FINE_TIM->PSC = g_fine_config.prescaler - 1;
+        FINE_TIM->ARR = g_fine_config.period - 1;
+        FINE_TIM->EGR = TIM_EGR_UG;
+        FINE_TIM->CR1 |= TIM_CR1_CEN;
     }
 }
 
-/**
- * @brief 设置时钟频率
- */
-static void FINE_SetClockFreq(uint32_t freq_hz)
+uint32_t FINE_GetSpeed(void)
 {
-    if (freq_hz >= 1000000) {
-        g_fine_delay = 1;
-    } else if (freq_hz >= 400000) {
-        g_fine_delay = 3;
-    } else if (freq_hz >= 200000) {
-        g_fine_delay = 6;
-    } else {
-        g_fine_delay = 12;
-    }
+    return g_fine_config.speed_hz;
 }
 
-/**
- * @brief FINE 初始化
- */
+static void FINE_TimerInit(void)
+{
+    FINE_TIM_CLK_ENABLE();
+    
+    FINE_TIM->CR1 = 0;
+    FINE_TIM->CR2 = 0;
+    FINE_TIM->SMCR = 0;
+    FINE_TIM->DIER = 0;
+    FINE_TIM->SR = 0;
+    
+    FINE_TIM->PSC = g_fine_config.prescaler - 1;
+    FINE_TIM->ARR = g_fine_config.period - 1;
+    
+    FINE_TIM->EGR = TIM_EGR_UG;
+    
+    FINE_TIM->CR1 |= TIM_CR1_CEN;
+}
+
+static void FINE_GPIO_Init_Reg(void)
+{
+    GPIO_TypeDef* ports[6] = {
+        g_fine_config.flmd0_port, g_fine_config.flmd1_port,
+        g_fine_config.flmd2_port, g_fine_config.flmd3_port,
+        g_fine_config.flclk_port, g_fine_config.reset_port
+    };
+    uint16_t pins[6] = {
+        g_fine_config.flmd0_pin, g_fine_config.flmd1_pin,
+        g_fine_config.flmd2_pin, g_fine_config.flmd3_pin,
+        g_fine_config.flclk_pin, g_fine_config.reset_pin
+    };
+    
+    for (int i = 0; i < 6; i++) {
+        GPIO_TypeDef* port = ports[i];
+        uint32_t pin = pins[i];
+        
+        if (port == GPIOA) __HAL_RCC_GPIOA_CLK_ENABLE();
+        else if (port == GPIOB) __HAL_RCC_GPIOB_CLK_ENABLE();
+        else if (port == GPIOC) __HAL_RCC_GPIOC_CLK_ENABLE();
+        else if (port == GPIOD) __HAL_RCC_GPIOD_CLK_ENABLE();
+        else if (port == GPIOE) __HAL_RCC_GPIOE_CLK_ENABLE();
+        else if (port == GPIOF) __HAL_RCC_GPIOF_CLK_ENABLE();
+        else if (port == GPIOG) __HAL_RCC_GPIOG_CLK_ENABLE();
+        else if (port == GPIOH) __HAL_RCC_GPIOH_CLK_ENABLE();
+        else if (port == GPIOI) __HAL_RCC_GPIOI_CLK_ENABLE();
+        
+        uint32_t shift = (pin % 8) * 4;
+        
+        port->MODER &= ~(0x3UL << shift);
+        port->MODER |= (0x1UL << shift);
+        
+        port->OTYPER |= (1UL << pin);
+        
+        port->PUPDR &= ~(0x3UL << shift);
+        port->PUPDR |= (0x1UL << shift);
+        
+        port->OSPEEDR &= ~(0x3UL << shift);
+        port->OSPEEDR |= (0x3UL << shift);
+    }
+    
+    FINE_FLMD0_LOW();
+    FINE_FLMD1_LOW();
+    FINE_FLMD2_LOW();
+    FINE_FLMD3_LOW();
+    FINE_CLK_LOW();
+    FINE_RESET_HIGH();
+}
+
+static void FINE_DATA_Mode_In(void)
+{
+    uint32_t pin = g_fine_config.flmd0_pin;
+    uint32_t shift = (pin % 8) * 4;
+    
+    g_fine_config.flmd0_port->MODER &= ~(0x3UL << shift);
+}
+
+static void FINE_DATA_Mode_Out(void)
+{
+    uint32_t pin = g_fine_config.flmd0_pin;
+    uint32_t shift = (pin % 8) * 4;
+    
+    g_fine_config.flmd0_port->MODER &= ~(0x3UL << shift);
+    g_fine_config.flmd0_port->MODER |= (0x1UL << shift);
+    g_fine_config.flmd0_port->OTYPER |= (1UL << pin);
+}
+
 HAL_StatusTypeDef FINE_Init(FINE_Config_TypeDef *config)
 {
     if (config == NULL) {
@@ -66,23 +157,23 @@ HAL_StatusTypeDef FINE_Init(FINE_Config_TypeDef *config)
     }
 
     memcpy(&g_fine_config, config, sizeof(FINE_Config_TypeDef));
-    g_fine_config.clock = (config->clock == 0) ? FINE_DEFAULT_CLOCK : config->clock;
-
-    FINE_GPIO_Init();
     
-    FINE_SetClockFreq(g_fine_config.clock);
+    if (g_fine_config.speed_hz == 0) {
+        g_fine_config.speed_hz = FINE_DEFAULT_CLOCK;
+    }
+    
+    FINE_SetSpeed(g_fine_config.speed_hz);
+    FINE_TimerInit();
+    FINE_GPIO_Init_Reg();
     
     g_fine_config.initialized = 1;
     
     return HAL_OK;
 }
 
-/**
- * @brief FINE 反初始化
- */
 HAL_StatusTypeDef FINE_DeInit(void)
 {
-    FINE_Exit();
+    FINE_TIM->CR1 &= ~TIM_CR1_CEN;
     FINE_GPIO_DeInit();
     
     memset(&g_fine_config, 0, sizeof(FINE_Config_TypeDef));
@@ -91,85 +182,71 @@ HAL_StatusTypeDef FINE_DeInit(void)
     return HAL_OK;
 }
 
-/**
- * @brief FINE GPIO 初始化
- */
 void FINE_GPIO_Init(void)
 {
-    FINE_DATA_MODE_OUT();
-    GPIO_Soft_SetMode(g_fine_config.flmd1_port, g_fine_config.flmd1_pin, SOFT_GPIO_MODE_OUT_PP, SOFT_GPIO_PULL_UP);
-    GPIO_Soft_SetMode(g_fine_config.flmd2_port, g_fine_config.flmd2_pin, SOFT_GPIO_MODE_OUT_PP, SOFT_GPIO_PULL_UP);
-    GPIO_Soft_SetMode(g_fine_config.flmd3_port, g_fine_config.flmd3_pin, SOFT_GPIO_MODE_OUT_PP, SOFT_GPIO_PULL_UP);
-    GPIO_Soft_SetMode(g_fine_config.flclk_port, g_fine_config.flclk_pin, SOFT_GPIO_MODE_OUT_PP, SOFT_GPIO_PULL_NONE);
-    GPIO_Soft_SetMode(g_fine_config.reset_port, g_fine_config.reset_pin, SOFT_GPIO_MODE_OUT_PP, SOFT_GPIO_PULL_UP);
-    
-    FINE_SET_DATA_LOW();
-    FINE_FLMD1_LOW();
-    FINE_FLMD2_LOW();
-    FINE_FLMD3_LOW();
-    FINE_CLK_LOW();
-    FINE_RESET_HIGH();
+    FINE_GPIO_Init_Reg();
 }
 
-/**
- * @brief FINE GPIO 反初始化
- */
 void FINE_GPIO_DeInit(void)
 {
-    GPIO_Soft_SetMode(g_fine_config.flmd0_port, g_fine_config.flmd0_pin, SOFT_GPIO_MODE_IN, SOFT_GPIO_PULL_NONE);
-    GPIO_Soft_SetMode(g_fine_config.flmd1_port, g_fine_config.flmd1_pin, SOFT_GPIO_MODE_IN, SOFT_GPIO_PULL_NONE);
-    GPIO_Soft_SetMode(g_fine_config.flmd2_port, g_fine_config.flmd2_pin, SOFT_GPIO_MODE_IN, SOFT_GPIO_PULL_NONE);
-    GPIO_Soft_SetMode(g_fine_config.flmd3_port, g_fine_config.flmd3_pin, SOFT_GPIO_MODE_IN, SOFT_GPIO_PULL_NONE);
-    GPIO_Soft_SetMode(g_fine_config.flclk_port, g_fine_config.flclk_pin, SOFT_GPIO_MODE_IN, SOFT_GPIO_PULL_NONE);
-    GPIO_Soft_SetMode(g_fine_config.reset_port, g_fine_config.reset_pin, SOFT_GPIO_MODE_IN, SOFT_GPIO_PULL_NONE);
+    uint16_t pins[6] = {
+        g_fine_config.flmd0_pin, g_fine_config.flmd1_pin,
+        g_fine_config.flmd2_pin, g_fine_config.flmd3_pin,
+        g_fine_config.flclk_pin, g_fine_config.reset_pin
+    };
+    
+    for (int i = 0; i < 6; i++) {
+        uint32_t shift = (pins[i] % 8) * 4;
+        GPIO_TypeDef* port;
+        switch(i) {
+            case 0: port = g_fine_config.flmd0_port; break;
+            case 1: port = g_fine_config.flmd1_port; break;
+            case 2: port = g_fine_config.flmd2_port; break;
+            case 3: port = g_fine_config.flmd3_port; break;
+            case 4: port = g_fine_config.flclk_port; break;
+            case 5: port = g_fine_config.reset_port; break;
+        }
+        port->MODER &= ~(0x3UL << shift);
+    }
 }
 
-/**
- * @brief 发送一位数据
- */
 void FINE_SendBit(uint8_t bit)
 {
     if (bit) {
-        FINE_SET_DATA_HIGH();
+        FINE_FLMD0_HIGH();
     } else {
-        FINE_SET_DATA_LOW();
+        FINE_FLMD0_LOW();
     }
     
-    FINE_DelayUs(1);
+    FINE_DelayNs(g_fine_config.tick_ns);
     
-    FINE_SET_CLK_HIGH();
-    FINE_DelayUs(1);
+    FINE_CLK_HIGH();
+    FINE_DelayNs(g_fine_config.tick_ns);
     
-    FINE_SET_CLK_LOW();
-    FINE_DelayUs(1);
+    FINE_CLK_LOW();
+    FINE_DelayNs(g_fine_config.tick_ns);
 }
 
-/**
- * @brief 接收一位数据
- */
 uint8_t FINE_ReceiveBit(void)
 {
     uint8_t bit;
     
-    FINE_DATA_MODE_IN();
-    FINE_DelayUs(1);
+    FINE_DATA_Mode_In();
+    FINE_DelayNs(g_fine_config.tick_ns);
     
-    FINE_SET_CLK_HIGH();
-    FINE_DelayUs(1);
+    FINE_CLK_HIGH();
+    FINE_DelayNs(g_fine_config.tick_ns);
     
-    bit = FINE_READ_DATA();
+    bit = FINE_DATA_READ() ? 1 : 0;
     
-    FINE_SET_CLK_LOW();
-    FINE_DelayUs(1);
+    FINE_CLK_LOW();
+    FINE_DelayNs(g_fine_config.tick_ns);
     
-    FINE_DATA_MODE_OUT();
+    FINE_DATA_Mode_Out();
     
-    return bit ? 1 : 0;
+    return bit;
 }
 
-/**
- * @brief 发送字节
- */
 HAL_StatusTypeDef FINE_WriteByte(uint8_t data)
 {
     for (int i = 0; i < 8; i++) {
@@ -180,9 +257,6 @@ HAL_StatusTypeDef FINE_WriteByte(uint8_t data)
     return HAL_OK;
 }
 
-/**
- * @brief 接收字节
- */
 uint8_t FINE_ReadByte(void)
 {
     uint8_t data = 0;
@@ -194,9 +268,6 @@ uint8_t FINE_ReadByte(void)
     return data;
 }
 
-/**
- * @brief 发送字
- */
 HAL_StatusTypeDef FINE_WriteWord(uint16_t data)
 {
     FINE_WriteByte(data & 0xFF);
@@ -205,9 +276,6 @@ HAL_StatusTypeDef FINE_WriteWord(uint16_t data)
     return HAL_OK;
 }
 
-/**
- * @brief 接收字
- */
 uint16_t FINE_ReadWord(void)
 {
     uint16_t data = 0;
@@ -218,9 +286,6 @@ uint16_t FINE_ReadWord(void)
     return data;
 }
 
-/**
- * @brief 发送双字
- */
 HAL_StatusTypeDef FINE_WriteDWord(uint32_t data)
 {
     FINE_WriteByte(data & 0xFF);
@@ -231,9 +296,6 @@ HAL_StatusTypeDef FINE_WriteDWord(uint32_t data)
     return HAL_OK;
 }
 
-/**
- * @brief 接收双字
- */
 uint32_t FINE_ReadDWord(void)
 {
     uint32_t data = 0;
@@ -246,9 +308,6 @@ uint32_t FINE_ReadDWord(void)
     return data;
 }
 
-/**
- * @brief 进入FINE模式
- */
 HAL_StatusTypeDef FINE_Enter(void)
 {
     FINE_RESET_LOW();
@@ -264,10 +323,10 @@ HAL_StatusTypeDef FINE_Enter(void)
     FINE_DelayUs(1000);
     
     for (int i = 0; i < 32; i++) {
-        FINE_SET_CLK_HIGH();
-        FINE_DelayUs(1);
-        FINE_SET_CLK_LOW();
-        FINE_DelayUs(1);
+        FINE_CLK_HIGH();
+        FINE_DelayNs(g_fine_config.tick_ns);
+        FINE_CLK_LOW();
+        FINE_DelayNs(g_fine_config.tick_ns);
     }
     
     FINE_WriteByte(FINE_CMD_READ_ID);
@@ -282,9 +341,6 @@ HAL_StatusTypeDef FINE_Enter(void)
     return HAL_OK;
 }
 
-/**
- * @brief 退出FINE模式
- */
 HAL_StatusTypeDef FINE_Exit(void)
 {
     FINE_WriteByte(FINE_CMD_EXIT);
@@ -303,22 +359,16 @@ HAL_StatusTypeDef FINE_Exit(void)
     return HAL_OK;
 }
 
-/**
- * @brief 复位目标
- */
 HAL_StatusTypeDef FINE_Reset(void)
 {
     FINE_RESET_LOW();
-    FINE_DelayUs(10000);
+    FINE_DelayUs(10);
     FINE_RESET_HIGH();
-    FINE_DelayUs(10000);
+    FINE_DelayUs(10);
     
     return HAL_OK;
 }
 
-/**
- * @brief 读取ID
- */
 HAL_StatusTypeDef FINE_ReadID(void)
 {
     FINE_WriteByte(FINE_CMD_READ_ID);
@@ -330,9 +380,6 @@ HAL_StatusTypeDef FINE_ReadID(void)
     return HAL_OK;
 }
 
-/**
- * @brief 读内存
- */
 HAL_StatusTypeDef FINE_ReadMem(uint32_t addr, uint8_t *data, uint32_t size)
 {
     FINE_WriteByte(FINE_CMD_READ);
@@ -345,9 +392,6 @@ HAL_StatusTypeDef FINE_ReadMem(uint32_t addr, uint8_t *data, uint32_t size)
     return HAL_OK;
 }
 
-/**
- * @brief 写内存
- */
 HAL_StatusTypeDef FINE_WriteMem(uint32_t addr, uint8_t *data, uint32_t size)
 {
     FINE_WriteByte(FINE_CMD_WRITE);
@@ -360,9 +404,6 @@ HAL_StatusTypeDef FINE_WriteMem(uint32_t addr, uint8_t *data, uint32_t size)
     return HAL_OK;
 }
 
-/**
- * @brief 擦除扇区
- */
 HAL_StatusTypeDef FINE_EraseSector(uint32_t addr)
 {
     FINE_WriteByte(FINE_CMD_ERASE);
@@ -371,9 +412,6 @@ HAL_StatusTypeDef FINE_EraseSector(uint32_t addr)
     return HAL_OK;
 }
 
-/**
- * @brief 擦除芯片
- */
 HAL_StatusTypeDef FINE_EraseChip(void)
 {
     FINE_WriteByte(FINE_CMD_ERASE);
@@ -382,9 +420,6 @@ HAL_StatusTypeDef FINE_EraseChip(void)
     return HAL_OK;
 }
 
-/**
- * @brief 校验
- */
 HAL_StatusTypeDef FINE_Verify(uint32_t addr, uint8_t *data, uint32_t size)
 {
     uint8_t temp;
@@ -402,25 +437,16 @@ HAL_StatusTypeDef FINE_Verify(uint32_t addr, uint8_t *data, uint32_t size)
     return HAL_OK;
 }
 
-/**
- * @brief 获取设备代码
- */
 uint8_t FINE_GetDeviceCode(void)
 {
     return g_fine_state.device_code;
 }
 
-/**
- * @brief 获取产品代码
- */
 uint16_t FINE_GetProductCode(void)
 {
     return g_fine_state.product_code;
 }
 
-/**
- * @brief 获取芯片ID
- */
 uint32_t FINE_GetChipID(void)
 {
     return g_fine_state.chip_id;

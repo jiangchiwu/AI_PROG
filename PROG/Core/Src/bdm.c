@@ -4,90 +4,171 @@
  * @brief   BDM (Background Debug Mode) 接口实现
  *          NXP/Freescale HC08/HCS08/HCS12系列调试接口
  *          支持最高10MHz时钟频率，使用寄存器操作和定时器精确定时
+ * 
+ * @author  AI_PROG项目
+ * @date    2026-06-05
+ * @version v2.0
+ * 
+ * @details BDM接口是Freescale/NXP单片机的调试接口，主要用于HC08、HCS08、HCS12等系列芯片。
+ *          本实现采用以下优化策略：
+ *          1. 寄存器直接操作替代HAL库函数，减少函数调用开销
+ *          2. 使用TIM8定时器实现纳秒级精确定时
+ *          3. 支持100KHz~10MHz的可调时钟频率
+ *          4. 开漏输出模式，支持双向数据传输
+ * 
+ * @note    BDM接口使用两个信号：BKPT(断点)和RESET(复位)
+ *          - BKPT: 双向数据/命令线
+ *          - RESET: 复位控制线
+ * 
+ * @warning 本驱动使用TIM8定时器，需确保与其他功能不冲突
  ******************************************************************************
  */
 
 #include "bdm.h"
 
+/**
+ * @brief BDM全局句柄，存储当前BDM配置和状态
+ */
 BDM_HandleTypeDef g_bdm_handle = {0};
 
+/**
+ * @brief BDM定时器定义
+ * @note  使用TIM8，挂载在APB2总线上，最高时钟可达480MHz
+ */
 #define BDM_TIM TIM8
 
-#define BDM_BKPT_PIN_MASK(hbdm)    (1 << ((hbdm)->bkpt_pin))
-#define BDM_RESET_PIN_MASK(hbdm)   (1 << ((hbdm)->reset_pin))
+/**
+ * @brief GPIO寄存器操作宏定义
+ * @note  使用BSRR寄存器实现原子操作，避免中断竞争问题
+ */
+#define BDM_BKPT_PIN_MASK(hbdm)    (1 << ((hbdm)->bkpt_pin))      /* BKPT引脚位掩码 */
+#define BDM_RESET_PIN_MASK(hbdm)   (1 << ((hbdm)->reset_pin))     /* RESET引脚位掩码 */
 
-#define BDM_BKPT_HIGH_REG(hbdm)    ((hbdm)->bkpt_port->BSRR = BDM_BKPT_PIN_MASK(hbdm))
-#define BDM_BKPT_LOW_REG(hbdm)     ((hbdm)->bkpt_port->BSRR = BDM_BKPT_PIN_MASK(hbdm) << 16)
-#define BDM_RESET_HIGH_REG(hbdm)   ((hbdm)->reset_port->BSRR = BDM_RESET_PIN_MASK(hbdm))
-#define BDM_RESET_LOW_REG(hbdm)    ((hbdm)->reset_port->BSRR = BDM_RESET_PIN_MASK(hbdm) << 16)
-#define BDM_BKPT_READ_REG(hbdm)    (((hbdm)->bkpt_port->IDR & BDM_BKPT_PIN_MASK(hbdm)) != 0)
+#define BDM_BKPT_HIGH_REG(hbdm)    ((hbdm)->bkpt_port->BSRR = BDM_BKPT_PIN_MASK(hbdm))        /* BKPT置高 */
+#define BDM_BKPT_LOW_REG(hbdm)     ((hbdm)->bkpt_port->BSRR = BDM_BKPT_PIN_MASK(hbdm) << 16)  /* BKPT置低 */
+#define BDM_RESET_HIGH_REG(hbdm)   ((hbdm)->reset_port->BSRR = BDM_RESET_PIN_MASK(hbdm))       /* RESET置高 */
+#define BDM_RESET_LOW_REG(hbdm)    ((hbdm)->reset_port->BSRR = BDM_RESET_PIN_MASK(hbdm) << 16)  /* RESET置低 */
+#define BDM_BKPT_READ_REG(hbdm)    (((hbdm)->bkpt_port->IDR & BDM_BKPT_PIN_MASK(hbdm)) != 0)   /* 读取BKPT引脚状态 */
 
+/**
+ * @brief 启动定时器计数
+ * @param hbdm: BDM句柄指针
+ * @note  定时器必须已初始化
+ */
 static inline void BDM_TimerStart(BDM_HandleTypeDef* hbdm)
 {
     BDM_TIM->CNT = 0;
     BDM_TIM->CR1 |= TIM_CR1_CEN;
 }
 
+/**
+ * @brief 停止定时器计数
+ * @param hbdm: BDM句柄指针
+ */
 static inline void BDM_TimerStop(BDM_HandleTypeDef* hbdm)
 {
     BDM_TIM->CR1 &= ~TIM_CR1_CEN;
 }
 
+/**
+ * @brief 等待定时器计数达到指定值
+ * @param hbdm: BDM句柄指针
+ * @param ticks: 等待的定时器计数值
+ * @note  阻塞式等待，精确延时
+ */
 static inline void BDM_TimerWait(BDM_HandleTypeDef* hbdm, uint32_t ticks)
 {
     BDM_TIM->CNT = 0;
     while (BDM_TIM->CNT < ticks);
 }
 
+/**
+ * @brief 纳秒级延时
+ * @param hbdm: BDM句柄指针
+ * @param ns: 延时时间(纳秒)
+ * @note  基于定时器实现，精度取决于定时器配置
+ */
 void BDM_TimerDelayNs(BDM_HandleTypeDef* hbdm, uint32_t ns)
 {
     uint32_t ticks = (ns + hbdm->tick_ns - 1) / hbdm->tick_ns;
     BDM_TimerWait(hbdm, ticks);
 }
 
+/**
+ * @brief 微秒级延时
+ * @param hbdm: BDM句柄指针
+ * @param us: 延时时间(微秒)
+ * @note  基于定时器实现，精度取决于定时器配置
+ */
 void BDM_TimerDelayUs(BDM_HandleTypeDef* hbdm, uint32_t us)
 {
     uint32_t ticks = (us * 1000 + hbdm->tick_ns - 1) / hbdm->tick_ns;
     BDM_TimerWait(hbdm, ticks);
 }
 
+/**
+ * @brief 初始化BDM定时器
+ * @param hbdm: BDM句柄指针
+ * @note  使用TIM8定时器，配置为基本定时器模式
+ * @note  定时器时钟 = APB2时钟 / prescaler
+ */
 static void BDM_TimerInit(BDM_HandleTypeDef* hbdm)
 {
+    /* 使能TIM8时钟 */
     BDM_TIM_CLK_ENABLE();
     
+    /* 复位定时器配置 */
     BDM_TIM->CR1 = 0;
     BDM_TIM->CR2 = 0;
     BDM_TIM->SMCR = 0;
     BDM_TIM->DIER = 0;
     BDM_TIM->SR = 0;
     
+    /* 设置预分频器和自动重装载值 */
     BDM_TIM->PSC = hbdm->prescaler - 1;
     BDM_TIM->ARR = hbdm->period - 1;
     
+    /* 生成更新事件，应用新配置 */
     BDM_TIM->EGR = TIM_EGR_UG;
     
+    /* 启动定时器 */
     BDM_TIM->CR1 |= TIM_CR1_CEN;
 }
 
+/**
+ * @brief 设置BDM通信速度
+ * @param hbdm: BDM句柄指针
+ * @param speed_hz: 目标通信速度(Hz)
+ * @note  支持的速度范围: 100KHz ~ 10MHz
+ * @note  速度过高会导致通信不稳定
+ */
 void BDM_SetSpeed(BDM_HandleTypeDef* hbdm, uint32_t speed_hz)
 {
+    /* 限制最大速度为10MHz */
     if (speed_hz > BDM_CLOCK_10MHZ) {
         speed_hz = BDM_CLOCK_10MHZ;
     }
     
+    /* 保存当前速度 */
     hbdm->speed_hz = speed_hz;
     
+    /* 获取APB2总线频率 */
     uint32_t apb2_freq = HAL_RCC_GetPCLK2Freq();
+    
+    /* 计算定时器时钟频率 (10倍于通信速度，提高分辨率) */
     uint32_t tick_freq = speed_hz * 10;
     
+    /* 计算预分频器值 */
     hbdm->prescaler = (apb2_freq + tick_freq - 1) / tick_freq;
     if (hbdm->prescaler < 1) {
         hbdm->prescaler = 1;
     }
     
+    /* 计算定时器tick对应的纳秒数 */
     hbdm->tick_ns = 1000000000ULL / (apb2_freq / hbdm->prescaler);
     hbdm->period = 65535;
     
+    /* 如果定时器正在运行，动态更新配置 */
     if (BDM_TIM->CR1 & TIM_CR1_CEN) {
         BDM_TIM->CR1 &= ~TIM_CR1_CEN;
         BDM_TIM->PSC = hbdm->prescaler - 1;
@@ -97,6 +178,11 @@ void BDM_SetSpeed(BDM_HandleTypeDef* hbdm, uint32_t speed_hz)
     }
 }
 
+/**
+ * @brief 获取当前BDM通信速度
+ * @param hbdm: BDM句柄指针
+ * @return 当前速度(Hz)
+ */
 uint32_t BDM_GetSpeed(BDM_HandleTypeDef* hbdm)
 {
     return hbdm->speed_hz;

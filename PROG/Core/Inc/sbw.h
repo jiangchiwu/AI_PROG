@@ -3,6 +3,7 @@
  * @file    sbw.h
  * @brief   SBW (Spy-Bi-Wire) 协议实现
  *          MSP430 调试接口 - 两线JTAG替代方案
+ *          支持最高10MHz时钟频率，使用寄存器操作和定时器精确定时
  ******************************************************************************
  */
 
@@ -24,10 +25,16 @@ extern "C" {
 
 #define SBW_CLOCK_100KHZ    100000
 #define SBW_CLOCK_200KHZ    200000
-#define SBW_CLOCK_400KHZ    400000
+#define SBW_CLOCK_500KHZ    500000
 #define SBW_CLOCK_1MHZ      1000000
+#define SBW_CLOCK_2MHZ      2000000
+#define SBW_CLOCK_5MHZ      5000000
+#define SBW_CLOCK_10MHZ     10000000
 
 #define SBW_DEFAULT_CLOCK   SBW_CLOCK_400KHZ
+
+#define SBW_TIM_INSTANCE    TIM7
+#define SBW_TIM_CLK_ENABLE() __HAL_RCC_TIM7_CLK_ENABLE()
 
 typedef struct {
     GPIO_TypeDef *tck_port;
@@ -39,7 +46,10 @@ typedef struct {
     GPIO_TypeDef *test_port;
     uint16_t test_pin;
 
-    uint32_t clock;
+    uint32_t speed_hz;
+    uint32_t tick_ns;
+    uint32_t prescaler;
+    uint32_t period;
     uint8_t initialized;
 } SBW_Config_TypeDef;
 
@@ -76,15 +86,17 @@ HAL_StatusTypeDef SBW_ReadMem(uint32_t addr, uint8_t *data, uint32_t size);
 uint16_t SBW_GetJTAGID(void);
 uint32_t SBW_GetIDCode(void);
 
+void SBW_SetSpeed(uint32_t speed_hz);
+uint32_t SBW_GetSpeed(void);
+
+void SBW_DelayNs(uint32_t ns);
 void SBW_DelayUs(uint32_t us);
-void SBW_SendBit(uint8_t bit);
-uint8_t SBW_ReceiveBit(void);
 
 void SBW_GPIO_Init(void);
 void SBW_GPIO_DeInit(void);
 
-#define SBW_Enable()      HAL_GPIO_WritePin(g_sbw_config.rst_port, g_sbw_config.rst_pin, GPIO_PIN_SET)
-#define SBW_Disable()     HAL_GPIO_WritePin(g_sbw_config.rst_port, g_sbw_config.rst_pin, GPIO_PIN_RESET)
+#define SBW_Enable()      ((g_sbw_config.rst_port)->BSRR = (1 << g_sbw_config.rst_pin))
+#define SBW_Disable()     ((g_sbw_config.rst_port)->BSRR = (1 << g_sbw_config.rst_pin) << 16)
 
 #ifdef __cplusplus
 }

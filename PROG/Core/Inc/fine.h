@@ -3,6 +3,7 @@
  * @file    fine.h
  * @brief   FINE (Flash Interface Network for Easy Programming) 接口实现
  *          Renesas 瑞萨单片机调试编程接口
+ *          支持最高10MHz时钟频率，使用寄存器操作和定时器精确定时
  ******************************************************************************
  */
 
@@ -24,10 +25,16 @@ extern "C" {
 
 #define FINE_CLOCK_100KHZ    100000
 #define FINE_CLOCK_200KHZ    200000
-#define FINE_CLOCK_400KHZ    400000
+#define FINE_CLOCK_500KHZ    500000
 #define FINE_CLOCK_1MHZ      1000000
+#define FINE_CLOCK_2MHZ      2000000
+#define FINE_CLOCK_5MHZ      5000000
+#define FINE_CLOCK_10MHZ     10000000
 
 #define FINE_DEFAULT_CLOCK   FINE_CLOCK_200KHZ
+
+#define FINE_TIM_INSTANCE    TIM13
+#define FINE_TIM_CLK_ENABLE() do { __HAL_RCC_TIM13_CLK_ENABLE(); } while(0)
 
 #define FINE_CMD_RESET       0x01
 #define FINE_CMD_READ_ID     0x02
@@ -52,7 +59,10 @@ typedef struct {
     GPIO_TypeDef *reset_port;
     uint16_t reset_pin;
 
-    uint32_t clock;
+    uint32_t speed_hz;
+    uint32_t tick_ns;
+    uint32_t prescaler;
+    uint32_t period;
     uint8_t initialized;
 } FINE_Config_TypeDef;
 
@@ -96,30 +106,34 @@ uint8_t FINE_GetDeviceCode(void);
 uint16_t FINE_GetProductCode(void);
 uint32_t FINE_GetChipID(void);
 
+void FINE_SetSpeed(uint32_t speed_hz);
+uint32_t FINE_GetSpeed(void);
+
+void FINE_DelayNs(uint32_t ns);
 void FINE_DelayUs(uint32_t us);
-void FINE_SendBit(uint8_t bit);
-uint8_t FINE_ReceiveBit(void);
 
 void FINE_GPIO_Init(void);
 void FINE_GPIO_DeInit(void);
 
-#define FINE_Enable()       HAL_GPIO_WritePin(g_fine_config.reset_port, g_fine_config.reset_pin, GPIO_PIN_SET)
-#define FINE_Disable()      HAL_GPIO_WritePin(g_fine_config.reset_port, g_fine_config.reset_pin, GPIO_PIN_RESET)
+#define FINE_Enable()       ((g_fine_config.reset_port)->BSRR = (1 << g_fine_config.reset_pin))
+#define FINE_Disable()      ((g_fine_config.reset_port)->BSRR = (1 << g_fine_config.reset_pin) << 16)
 
-#define FINE_FLMD0_HIGH()   HAL_GPIO_WritePin(g_fine_config.flmd0_port, g_fine_config.flmd0_pin, GPIO_PIN_SET)
-#define FINE_FLMD0_LOW()    HAL_GPIO_WritePin(g_fine_config.flmd0_port, g_fine_config.flmd0_pin, GPIO_PIN_RESET)
-#define FINE_FLMD1_HIGH()   HAL_GPIO_WritePin(g_fine_config.flmd1_port, g_fine_config.flmd1_pin, GPIO_PIN_SET)
-#define FINE_FLMD1_LOW()    HAL_GPIO_WritePin(g_fine_config.flmd1_port, g_fine_config.flmd1_pin, GPIO_PIN_RESET)
-#define FINE_FLMD2_HIGH()   HAL_GPIO_WritePin(g_fine_config.flmd2_port, g_fine_config.flmd2_pin, GPIO_PIN_SET)
-#define FINE_FLMD2_LOW()    HAL_GPIO_WritePin(g_fine_config.flmd2_port, g_fine_config.flmd2_pin, GPIO_PIN_RESET)
-#define FINE_FLMD3_HIGH()   HAL_GPIO_WritePin(g_fine_config.flmd3_port, g_fine_config.flmd3_pin, GPIO_PIN_SET)
-#define FINE_FLMD3_LOW()    HAL_GPIO_WritePin(g_fine_config.flmd3_port, g_fine_config.flmd3_pin, GPIO_PIN_RESET)
+#define FINE_FLMD0_HIGH()   ((g_fine_config.flmd0_port)->BSRR = (1 << g_fine_config.flmd0_pin))
+#define FINE_FLMD0_LOW()    ((g_fine_config.flmd0_port)->BSRR = (1 << g_fine_config.flmd0_pin) << 16)
+#define FINE_FLMD1_HIGH()   ((g_fine_config.flmd1_port)->BSRR = (1 << g_fine_config.flmd1_pin))
+#define FINE_FLMD1_LOW()    ((g_fine_config.flmd1_port)->BSRR = (1 << g_fine_config.flmd1_pin) << 16)
+#define FINE_FLMD2_HIGH()   ((g_fine_config.flmd2_port)->BSRR = (1 << g_fine_config.flmd2_pin))
+#define FINE_FLMD2_LOW()    ((g_fine_config.flmd2_port)->BSRR = (1 << g_fine_config.flmd2_pin) << 16)
+#define FINE_FLMD3_HIGH()   ((g_fine_config.flmd3_port)->BSRR = (1 << g_fine_config.flmd3_pin))
+#define FINE_FLMD3_LOW()    ((g_fine_config.flmd3_port)->BSRR = (1 << g_fine_config.flmd3_pin) << 16)
 
-#define FINE_CLK_HIGH()     HAL_GPIO_WritePin(g_fine_config.flclk_port, g_fine_config.flclk_pin, GPIO_PIN_SET)
-#define FINE_CLK_LOW()      HAL_GPIO_WritePin(g_fine_config.flclk_port, g_fine_config.flclk_pin, GPIO_PIN_RESET)
+#define FINE_CLK_HIGH()     ((g_fine_config.flclk_port)->BSRR = (1 << g_fine_config.flclk_pin))
+#define FINE_CLK_LOW()      ((g_fine_config.flclk_port)->BSRR = (1 << g_fine_config.flclk_pin) << 16)
 
-#define FINE_RESET_HIGH()   HAL_GPIO_WritePin(g_fine_config.reset_port, g_fine_config.reset_pin, GPIO_PIN_SET)
-#define FINE_RESET_LOW()    HAL_GPIO_WritePin(g_fine_config.reset_port, g_fine_config.reset_pin, GPIO_PIN_RESET)
+#define FINE_RESET_HIGH()   ((g_fine_config.reset_port)->BSRR = (1 << g_fine_config.reset_pin))
+#define FINE_RESET_LOW()    ((g_fine_config.reset_port)->BSRR = (1 << g_fine_config.reset_pin) << 16)
+
+#define FINE_DATA_READ()    (((g_fine_config.flmd0_port)->IDR & (1 << g_fine_config.flmd0_pin)) != 0)
 
 #ifdef __cplusplus
 }
