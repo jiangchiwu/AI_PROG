@@ -128,6 +128,12 @@ typedef enum {
     VENDOR_MPS             = 0x007B,   /* Monolithic Power */
     VENDOR_LINEAR          = 0x007C,   /* Linear Technology */
     
+    /* 厂商别名 - 兼容旧代码 */
+    VENDOR_HANGSHUN        = VENDOR_HKMCU,       /* 航顺芯片别名 */
+    VENDOR_NATIONZ         = VENDOR_NATIONSTECH,  /* 国民技术别名 */
+    VENDOR_RISCV           = 0x0080,   /* RISC-V International */
+    VENDOR_ANLOGIC         = 0x0081,   /* 安路科技 */
+    
     VENDOR_UNKNOWN         = 0xFFFF,   /* 未知厂商 */
     
     /* 厂商ID最大值 - 用于数组大小 */
@@ -224,6 +230,7 @@ typedef enum {
     CORE_PIC24             = 0x5020,
     CORE_DSPIC             = 0x5021,   /* dsPIC DSC */
     CORE_78K0R             = 0x5030,
+    CORE_78K0              = 0x5032,
     CORE_RL78              = 0x5031,
     CORE_XA                = 0x5040,
     
@@ -262,6 +269,22 @@ typedef enum {
     CORE_X64               = 0x7001,
     CORE_DSPIC33           = 0x8000,
     CORE_STM32WBA          = 0x8001,
+    
+    /* FPGA/CPLD/DSP内核 */
+    CORE_FPGA              = 0x9000,   /* 通用FPGA */
+    CORE_FPGA_XILINX7      = 0x9001,   /* Xilinx 7系列 */
+    CORE_FPGA_XILINXUS     = 0x9002,   /* Xilinx UltraScale */
+    CORE_FPGA_INTEL        = 0x9010,   /* Intel/Altera FPGA */
+    CORE_FPGA_LATTICE      = 0x9020,   /* Lattice FPGA */
+    CORE_FPGA_GOWIN        = 0x9030,   /* 高云 FPGA */
+    CORE_FPGA_ANLOGIC      = 0x9040,   /* 安路 FPGA */
+    CORE_CPLD              = 0x9100,   /* 通用CPLD */
+    CORE_CPLD_XILINX       = 0x9101,   /* Xilinx CPLD */
+    CORE_CPLD_INTEL        = 0x9110,   /* Intel/Altera CPLD */
+    CORE_CPLD_LATTICE      = 0x9120,   /* Lattice CPLD */
+    CORE_BLACKFIN          = 0x9200,   /* ADI Blackfin DSP */
+    CORE_SHARC             = 0x9210,   /* ADI SHARC DSP */
+    CORE_ADSP21XX          = 0x9220,   /* ADI ADSP-21xx */
     
     CORE_UNKNOWN           = 0xFFFF,
 } Chip_Core_Type_t;

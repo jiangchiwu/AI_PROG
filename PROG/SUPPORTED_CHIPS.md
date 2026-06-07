@@ -456,6 +456,31 @@
 
 ---
 
+## 五、英飞凌TriCore芯片（DAP协议）
+
+### 5.1 TC2xx系列 ✅
+
+英飞凌TriCore TC2xx系列汽车级微控制器，支持DAP调试协议。
+
+| 型号 | Flash | RAM | 内核数 | 频率 | 封装 | 调试接口 | 状态 |
+|------|-------|-----|--------|------|------|----------|------|
+| TC234L64F200FFBDVX | 2MB | 192KB | 1 | 200MHz | LQFP144 | DAP/JTAG | 已支持 |
+| TC264D128F200NBDBX | 4MB | 472KB | 2 | 200MHz | BGA292 | DAP/JTAG | 已支持 |
+| TC275T192F200NBDCX | 8MB | 1MB | 3 | 200MHz | BGA516 | DAP/JTAG | 已支持 |
+| TC297TX256F200NEDC | 8MB | 2MB | 3 | 200MHz | BGA616 | DAP/JTAG | 已支持 |
+
+### 5.2 TC3xx系列 ✅
+
+英飞凌TriCore TC3xx系列高性能汽车级微控制器，支持DAP调试协议。
+
+| 型号 | Flash | RAM | 内核数 | 频率 | 封装 | 调试接口 | 状态 |
+|------|-------|-----|--------|------|------|----------|------|
+| TC333L128F300SBDD | 6MB | 512KB | 1 | 300MHz | LQFP176 | DAP/JTAG | 已支持 |
+| TC377TP128F300NEDC | 8MB | 1.5MB | 2 | 300MHz | BGA516 | DAP/JTAG | 已支持 |
+| TC397XX256F300NEDC | 16MB | 6.8MB | 6 | 300MHz | BGA696 | DAP/JTAG | 已支持 |
+
+---
+
 ## 六、Microchip PIC芯片（ICSP协议）
 
 ### 6.1 PIC16F系列 ⬜

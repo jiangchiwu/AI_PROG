@@ -3,11 +3,27 @@
  * @file    icsp.c
  * @brief   ICSP (In-Circuit Serial Programming) 和 ISP (In-System Programming) 接口实现
  *
- *          ICSP用于Microchip PIC系列微控制器
- *          ISP用于Atmel AVR系列微控制器
+ * @author  AI_PROG项目
+ * @date    2026-06-05
+ * @version v2.0
  *
- *          使用GPIO_Soft框架进行IO口软件模拟
- *          使用定时器进行精确定时
+ * @details 本文件实现了两种串行编程接口：
+ *          1. ICSP (In-Circuit Serial Programming): 用于Microchip PIC系列微控制器
+ *             - 支持PIC10/PIC12/PIC16/PIC18等多个系列
+ *             - 使用PGC(时钟)、PGD(数据)、MCLR(复位)三线接口
+ *          2. ISP (In-System Programming): 用于Atmel AVR系列微控制器
+ *             - 支持ATmega/ATtiny等多个系列
+ *             - 使用SPI协议进行通信(SCK/MOSI/MISO/RST)
+ *
+ *          本实现采用以下优化策略：
+ *          1. 使用GPIO_Soft框架进行IO口软件模拟，灵活性高
+ *          2. 使用TIM7定时器实现纳秒级精确定时
+ *          3. 支持100KHz~8MHz的可调时钟频率
+ *          4. 同时支持硬件SPI和软件模拟SPI模式
+ *
+ * @note    ICSP接口使用TIM7定时器，需确保与其他功能不冲突
+ *
+ * @warning 编程操作会擦除芯片Flash内容，请谨慎操作
  ******************************************************************************
  */
 
@@ -17,13 +33,25 @@
  * ICSP (PIC系列) 全局变量和宏定义
  *============================================================================*/
 
-/* ICSP全局句柄 */
+/**
+ * @brief ICSP全局句柄
+ *        存储ICSP接口的硬件配置和运行状态
+ */
 ICSP_HandleTypeDef g_icsp_handle = {0};
 
-/* ICSP定时器定义 */
+/**
+ * @brief ICSP定时器定义
+ * @note  使用TIM7，挂载在APB1总线上，最高时钟可达120MHz
+ */
 #define ICSP_TIM TIM7
 
-/* ICSP GPIO宏定义 - 使用GPIO_Soft框架 */
+/**
+ * @brief ICSP GPIO宏定义 - 使用GPIO_Soft框架
+ * @note  ICSP接口信号说明：
+ *        - PGC: Program Clock - 编程时钟线
+ *        - PGD: Program Data - 编程数据线(双向)
+ *        - MCLR: Master Clear - 主复位线(低有效)
+ */
 #define ICSP_PGC_HIGH()      GPIO_Soft_WriteBit(g_icsp_handle.pgc_port, g_icsp_handle.pgc_pin, SOFT_GPIO_HIGH)
 #define ICSP_PGC_LOW()       GPIO_Soft_WriteBit(g_icsp_handle.pgc_port, g_icsp_handle.pgc_pin, SOFT_GPIO_LOW)
 #define ICSP_PGD_HIGH()      GPIO_Soft_WriteBit(g_icsp_handle.pgd_port, g_icsp_handle.pgd_pin, SOFT_GPIO_HIGH)
@@ -36,10 +64,20 @@ ICSP_HandleTypeDef g_icsp_handle = {0};
  * ISP (AVR系列) 全局变量和宏定义
  *============================================================================*/
 
-/* ISP全局句柄 */
+/**
+ * @brief ISP全局句柄
+ *        存储ISP接口的硬件配置和运行状态
+ */
 ISP_HandleTypeDef g_isp_handle = {0};
 
-/* ISP GPIO宏定义 */
+/**
+ * @brief ISP GPIO宏定义
+ * @note  ISP接口信号说明(基于SPI协议)：
+ *        - SCK: Serial Clock - 串行时钟
+ *        - MOSI: Master Output Slave Input - 主机输出/从机输入
+ *        - MISO: Master Input Slave Output - 主机输入/从机输出
+ *        - RST: Reset - 复位线(低有效)
+ */
 #define ISP_SCK_HIGH()       GPIO_Soft_WriteBit(g_isp_handle.sck_port, g_isp_handle.sck_pin, SOFT_GPIO_HIGH)
 #define ISP_SCK_LOW()        GPIO_Soft_WriteBit(g_isp_handle.sck_port, g_isp_handle.sck_pin, SOFT_GPIO_LOW)
 #define ISP_MOSI_HIGH()      GPIO_Soft_WriteBit(g_isp_handle.mosi_port, g_isp_handle.mosi_pin, SOFT_GPIO_HIGH)
@@ -55,6 +93,7 @@ ISP_HandleTypeDef g_isp_handle = {0};
 /**
  * @brief  ICSP定时器等待指定tick数
  * @param  ticks: 等待的tick数
+ * @note   阻塞式等待，基于TIM7定时器实现精确定时
  */
 static void ICSP_TimerWait(uint32_t ticks)
 {
@@ -66,6 +105,7 @@ static void ICSP_TimerWait(uint32_t ticks)
  * @brief  ICSP纳秒级延时
  * @param  hicsp: ICSP句柄
  * @param  ns: 延时纳秒数
+ * @note   基于定时器实现，精度取决于定时器配置的tick_ns
  */
 void ICSP_DelayNs(ICSP_HandleTypeDef* hicsp, uint32_t ns)
 {
@@ -78,6 +118,7 @@ void ICSP_DelayNs(ICSP_HandleTypeDef* hicsp, uint32_t ns)
  * @brief  ICSP微秒级延时
  * @param  hicsp: ICSP句柄
  * @param  us: 延时微秒数
+ * @note   基于定时器实现，精度取决于定时器配置的tick_ns
  */
 void ICSP_DelayUs(ICSP_HandleTypeDef* hicsp, uint32_t us)
 {
@@ -90,6 +131,8 @@ void ICSP_DelayUs(ICSP_HandleTypeDef* hicsp, uint32_t us)
  * @brief  设置ICSP通信速度
  * @param  hicsp: ICSP句柄
  * @param  speed_hz: 期望的速度(Hz)
+ * @note   支持的速度范围: 100KHz ~ 8MHz
+ * @note   使用4倍过采样以提高定时精度
  */
 void ICSP_SetSpeed(ICSP_HandleTypeDef* hicsp, uint32_t speed_hz)
 {
@@ -99,10 +142,8 @@ void ICSP_SetSpeed(ICSP_HandleTypeDef* hicsp, uint32_t speed_hz)
 
     hicsp->speed_hz = speed_hz;
 
-    /* 获取APB1时钟频率 */
     uint32_t apb1_freq = HAL_RCC_GetPCLK1Freq();
-    /* 计算定时器分辨率: tick_ns = 1秒 / 定时器频率 */
-    uint32_t tick_freq = speed_hz * 4;  /* 4倍过采样以提高精度 */
+    uint32_t tick_freq = speed_hz * 4;
 
     hicsp->prescaler = (apb1_freq + tick_freq - 1) / tick_freq;
     if (hicsp->prescaler < 1) {
@@ -112,7 +153,6 @@ void ICSP_SetSpeed(ICSP_HandleTypeDef* hicsp, uint32_t speed_hz)
     hicsp->tick_ns = 1000000000ULL / (apb1_freq / hicsp->prescaler);
     hicsp->period = 65535;
 
-    /* 如果定时器已在运行,更新分频系数 */
     if (ICSP_TIM->CR1 & TIM_CR1_CEN) {
         ICSP_TIM->CR1 &= ~TIM_CR1_CEN;
         ICSP_TIM->PSC = hicsp->prescaler - 1;
@@ -923,8 +963,20 @@ void ISP_GPIO_DeInit(ISP_HandleTypeDef* hisp)
 
 /**
  * @brief  ISP软件模拟SPI字节传输
- *          AVR ISP使用SPI模式0: CPOL=0, CPHA=0
- *          数据在SCK上升沿采样
+ * 
+ * @details AVR ISP使用SPI模式0进行通信：
+ *          - CPOL=0: 时钟空闲时为低电平
+ *          - CPHA=0: 数据在SCK上升沿被采样
+ *          - 数据传输顺序: MSB(最高有效位)优先
+ * 
+ *          时序流程：
+ *          1. 设置MOSI输出位(MSB先)
+ *          2. 等待半周期
+ *          3. SCK上升沿 - 从机采样MOSI，主机采样MISO
+ *          4. 等待半周期
+ *          5. SCK下降沿
+ *          6. 重复8次完成一个字节
+ * 
  * @param  hisp: ISP句柄
  * @param  data: 要发送的字节
  * @retval 接收到的字节
@@ -932,11 +984,10 @@ void ISP_GPIO_DeInit(ISP_HandleTypeDef* hisp)
 uint8_t ISP_SoftTransferByte(ISP_HandleTypeDef* hisp, uint8_t data)
 {
     uint8_t received = 0;
-    uint32_t half_period_us = 500000 / hisp->speed_hz;  /* 半周期微秒数 */
+    uint32_t half_period_us = 500000 / hisp->speed_hz;
     if (half_period_us < 1) half_period_us = 1;
 
     for (uint8_t i = 0; i < 8; i++) {
-        /* 发送位(MSB优先) */
         if (data & 0x80) {
             ISP_MOSI_HIGH();
         } else {
@@ -944,27 +995,21 @@ uint8_t ISP_SoftTransferByte(ISP_HandleTypeDef* hisp, uint8_t data)
         }
         data <<= 1;
 
-        /* 等待半周期 */
         ISP_DelayUs(hisp, half_period_us);
 
-        /* SCK上升沿 - MISO数据被采样 */
         ISP_SCK_HIGH();
 
-        /* 读取MISO位 */
         if (ISP_MISO_READ() == SOFT_GPIO_HIGH) {
             received |= 0x01;
         }
 
-        /* 等待半周期 */
         ISP_DelayUs(hisp, half_period_us);
 
-        /* SCK下降沿 */
         ISP_SCK_LOW();
 
         received <<= 1;
     }
 
-    /* 最后一位不要移动 */
     received >>= 1;
 
     return received;
